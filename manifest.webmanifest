@@ -2,24 +2,28 @@
   "name": "FSMI App",
   "short_name": "FSMI",
   "description": "Webapp della Congregazione dei Figli di Santa Maria Immacolata",
-"start_url": "/index.html",
-"scope": "/",
+
+  "start_url": "/fsmi/",
+  "scope": "/fsmi/",
+
   "display": "standalone",
+  "orientation": "portrait",
+
   "background_color": "#ffffff",
   "theme_color": "#0879c9",
+
   "icons": [
     {
-      "src": "img/logo-192.png",
+      "src": "/fsmi/img/logo-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "img/logo-512.png",
+      "src": "/fsmi/img/logo-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }
-  ],
-  "orientation": "portrait"
+  ]
 }
