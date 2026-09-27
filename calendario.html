@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#0879c9">
+
+    <meta name="description"
+          content="Webapp della Congregazione Pontificia">
+
+    <title>Congregazione Pontificia</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         MENU BUTTON
+    ========================== -->
+
+    <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Apri menu"
+        aria-expanded="false">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </button>
+
+
+    <!-- =========================
+         SIDE NAVIGATION
+    ========================== -->
+
+    <aside class="side-nav" id="sideNav">
+
+        <div class="side-nav-top">
+
+            <div class="nav-brand">
+
+                <div class="nav-logo">
+                    <img src="img/logo.png" alt="Logo Congregazione">
+                </div>
+
+                <div class="nav-brand-text">
+                    <strong>CONGREGAZIONE DEI</strong>
+                    <span>Figli di Santa Maria Immacolata</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <nav class="nav-menu">
+
+            <a href="index.html" class="nav-item" data-page="home">
+                <span class="nav-icon">⌂</span>
+                <span class="nav-label">Home</span>
+            </a>
+
+            <a href="religiosi.html" class="nav-item" data-page="religiosi">
+                <span class="nav-icon">♟</span>
+                <span class="nav-label">I religiosi</span>
+            </a>
+
+            <a href="documenti.html" class="nav-item" data-page="documenti">
+                <span class="nav-icon">▤</span>
+                <span class="nav-label">Documenti</span>
+            </a>
+
+            <a href="#calendario" class="nav-item active" data-page="calendario">
+                <span class="nav-icon">□</span>
+                <span class="nav-label">Calendario</span>
+            </a>
+
+        </nav>
+
+
+        <div class="side-nav-bottom">
+
+            <span class="status-dot"></span>
+            <span>Comunità</span>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         OVERLAY
+    ========================== -->
+
+    <div class="nav-overlay" id="navOverlay"></div>
+
+
+    <!-- =========================
+         MAIN APP
+    ========================== -->
+
+    <main class="app">
+
+
+
+    <!-- ======================================================
+         TOP BAR
+    ======================================================= -->
+
+    <header class="topbar">
+
+
+        <div class="topbar-left"> 
+            <div class="mobile-title"> 
+                <img src="img/logo.png" alt="Logo Figli di Santa Maria Immacolata" class="topbar-logo"> 
+                <span> CONGREGAZIONE DEI 
+                    <br>Figli di Santa Maria Immacolata </span> 
+                </div> 
+        </div>
+
+
+
+        <div class="topbar-right">
+
+            <button class="icon-button"
+                    type="button"
+                    title="Notifiche"
+                    aria-label="Notifiche">
+
+                ♧
+
+            </button>
+
+
+            <button class="profile-button"
+                    type="button"
+                    aria-label="Profilo">
+
+                <span>
+                    R
+                </span>
+
+            </button>
+
+        </div>
+
+
+    </header>
+
+    <!-- ======================================================
+         INSERT HERE
+    ======================================================= -->
+
+
+<iframe
+    src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Europe%2FRome&showPrint=0&mode=MONTH&hl=it&showCalendars=0&src=YjF2dGFkdXYydTBtdjdkaTJyZjhpaTAzMGNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%237cb342"
+    style="border:none; width:100%; height:calc(100vh - 70px);"
+    scrolling="no">
+</iframe>
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ======================================================
+         FOOTER
+    ======================================================= -->
+
+    <footer>
+
+        <span>
+            © 2026 Congregazione Pontificia
+        </span>
+
+
+        <span>
+            Servire · Pregare · Testimoniare
+        </span>
+
+    </footer>
+
+
+</main>
+
+
+
+<!-- ==========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script src="js/app.js"></script>
+
+</body>
+
+</html>
