@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#0879c9">
+
+    <meta name="description"
+          content="Documenti ufficiali e materiali della Congregazione dei Figli di Santa Maria Immacolata">
+
+    <title>Documenti | Congregazione Pontificia</title>
+
+
+    <!-- =========================
+         UNIVERSAL & PAGE STYLES
+    ========================== -->
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <link rel="stylesheet"
+          href="css/documenti.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         MENU BUTTON
+    ========================== -->
+
+    <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Apri menu"
+        aria-expanded="false"
+        aria-controls="sideNav">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </button>
+
+
+
+    <!-- =========================
+         SIDE NAVIGATION
+    ========================== -->
+
+    <aside
+        class="side-nav"
+        id="sideNav">
+
+
+        <div class="side-nav-top">
+
+            <div class="nav-brand">
+
+
+                <div class="nav-logo">
+
+                    <img
+                        src="img/logo.png"
+                        alt="Logo Congregazione">
+
+                </div>
+
+
+                <div class="nav-brand-text">
+
+                    <strong>
+                        CONGREGAZIONE DEI
+                    </strong>
+
+                    <span>
+                        Figli di Santa Maria Immacolata
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             NAVIGATION
+        ========================== -->
+
+        <nav
+            class="nav-menu"
+            aria-label="Navigazione principale">
+
+
+            <!-- HOME -->
+
+            <a
+                href="index.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span class="nav-label">
+                    Home
+                </span>
+
+            </a>
+
+
+
+            <!-- I RELIGIOSI -->
+
+            <a
+                href="religiosi.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ♟
+                </span>
+
+                <span class="nav-label">
+                    I religiosi
+                </span>
+
+            </a>
+
+
+
+            <!-- DOCUMENTI -->
+
+            <a
+                href="documenti.html"
+                class="nav-item active"
+                aria-current="page">
+
+                <span class="nav-icon">
+                    ▤
+                </span>
+
+                <span class="nav-label">
+                    Documenti
+                </span>
+
+            </a>
+
+
+
+            <!-- CALENDARIO -->
+
+            <a
+                href="calendario.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    □
+                </span>
+
+                <span class="nav-label">
+                    Calendario
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+
+        <!-- =========================
+             SIDE NAV FOOTER
+        ========================== -->
+
+        <div class="side-nav-bottom">
+
+            <span class="status-dot"></span>
+
+            <span>
+                Comunità
+            </span>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =========================
+         OVERLAY
+    ========================== -->
+
+    <div
+        class="nav-overlay"
+        id="navOverlay">
+    </div>
+
+
+
+    <!-- =========================
+         MAIN APP
+    ========================== -->
+
+    <main class="app">
+
+
+
+        <!-- ======================================================
+             TOP BAR
+        ======================================================= -->
+
+        <header class="topbar">
+
+
+            <div class="topbar-left">
+
+                <div class="mobile-title">
+
+                    <img
+                        src="img/logo.png"
+                        alt="Logo Figli di Santa Maria Immacolata"
+                        class="topbar-logo">
+
+                    <span>
+                        CONGREGAZIONE DEI
+                        <br>
+                        Figli di Santa Maria Immacolata
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="topbar-right">
+
+
+                <button
+                    class="icon-button"
+                    type="button"
+                    title="Notifiche"
+                    aria-label="Notifiche">
+
+                    ♧
+
+                </button>
+
+
+
+                <button
+                    class="profile-button"
+                    type="button"
+                    aria-label="Profilo">
+
+                    <span>
+                        R
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- ======================================================
+             DOCUMENTI
+        ======================================================= -->
+
+        <section
+            class="page active-page"
+            id="documenti">
+
+
+            <!-- =========================
+                 PAGE HEADER
+            ========================== -->
+
+            <div class="page-header">
+
+                <span class="eyebrow">
+                    ARCHIVIO
+                </span>
+
+
+                <h1>
+                    Documenti
+                </h1>
+
+
+                <p>
+                    Documenti ufficiali e materiali
+                    della Congregazione.
+                </p>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 DOCUMENT BOOKS
+            =================================================== -->
+
+            <div class="documenti-grid">
+
+
+                <!-- =========================
+                     COSTITUZIONI
+                ========================== -->
+
+                <article class="document-book" onclick="window.location.href='documenti/costituzioni.html';" style="cursor: pointer;">
+
+                    <div class="document-book-content">
+
+                        <h2>
+                            Costituzioni Generali
+                        </h2>
+
+                        <p>
+                            Testo fondamentale sulla regola
+                            e la vita spirituale della Congregazione.
+                        </p>
+
+                        <div class="document-meta">
+
+                            <span class="document-type">
+                                LOCAL
+                            </span>
+
+                            <span class="document-date">
+                                2013
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- =========================
+                     DIRETTORIO
+                ========================== -->
+
+                <article class="document-book" onclick="window.location.href='documenti/direttorio.html';" style="cursor: pointer;">
+
+                    <div class="document-book-content">
+
+                        <h2>
+                            Direttorio Comunitario
+                        </h2>
+
+                        <p>
+                            Norme pratiche e orientamenti
+                            per la vita comunitaria quotidiana.
+                        </p>
+
+                        <div class="document-meta">
+
+                            <span class="document-type">
+                                LOCAL
+                            </span>
+
+                            <span class="document-date">
+                                2011
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+
+                
+
+
+
+                <!-- =========================
+                     ANNUARIO
+                ========================== -->
+
+                <article class="document-book" onclick="window.location.href='documenti/annuario.html';" style="cursor: pointer;">
+
+                    <div class="document-book-content">
+
+                        <h2>
+                            Annuario FSMI 2027
+                        </h2>
+
+                        <p>
+                            Elenco completo dei membri,
+                            case religiose e opere apostoliche.
+                            Da P. Arielex
+                        </p>
+
+                        <div class="document-meta">
+
+                            <span class="document-type">
+                                PDF
+                            </span>
+
+                            <span class="document-date">
+                                2027
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+
+                
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ======================================================
+             FOOTER
+        ======================================================= -->
+
+        <footer>
+
+            <span>
+                © 2026 Congregazione Pontificia
+            </span>
+
+            <span>
+                Servire · Pregare · Testimoniare
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+
+    <!-- ==========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script src="js/app.js"></script>
+
+
+</body>
+
+</html>
