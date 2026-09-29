@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#0879c9">
+
+    <meta name="description"
+          content="Documenti ufficiali e materiali della Congregazione dei Figli di Santa Maria Immacolata">
+
+    <title>Documenti | Congregazione Pontificia</title>
+
+
+    <!-- =========================
+         UNIVERSAL & PAGE STYLES
+    ========================== -->
+
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/documenti.css">
+<link rel="stylesheet" href="css/subcss.css">
+
+
+
+
+
+
+    <!-- 1. Load the PDF.js Web Component script -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/pdfjs-viewer-element/dist/pdfjs-viewer-element.js"></script>
+
+    <style>
+        /* Responsive container wrapper */
+        .pdf-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Enforce view sizing for mobile viewports */
+        pdfjs-viewer-element {
+            width: 100%;
+            height: 80vh; /* Scaled to 80% of the device height */
+            display: block;
+        }
+    </style>
+    <!-- 1. Load the PDF.js Web Component script -->
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         MENU BUTTON
+    ========================== -->
+
+    <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Apri menu"
+        aria-expanded="false"
+        aria-controls="sideNav">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </button>
+
+
+
+    <!-- =========================
+         SIDE NAVIGATION
+    ========================== -->
+
+    <aside
+        class="side-nav"
+        id="sideNav">
+
+
+        <div class="side-nav-top">
+
+            <div class="nav-brand">
+
+
+                <div class="nav-logo">
+
+                    <img
+                        src="../img/logo.png"
+                        alt="Logo Congregazione">
+
+                </div>
+
+
+                <div class="nav-brand-text">
+
+                    <strong>
+                        CONGREGAZIONE DEI
+                    </strong>
+
+                    <span>
+                        Figli di Santa Maria Immacolata
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             NAVIGATION
+        ========================== -->
+
+        <nav
+            class="nav-menu"
+            aria-label="Navigazione principale">
+
+
+            <!-- HOME -->
+
+            <a
+                href="../index.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span class="nav-label">
+                    Home
+                </span>
+
+            </a>
+
+
+
+            <!-- I RELIGIOSI -->
+
+            <a
+                href="../religiosi.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    ♟
+                </span>
+
+                <span class="nav-label">
+                    I religiosi
+                </span>
+
+            </a>
+
+
+
+            <!-- DOCUMENTI -->
+
+            <a
+                href="../documenti.html"
+                class="nav-item active"
+                aria-current="page">
+
+                <span class="nav-icon">
+                    ▤
+                </span>
+
+                <span class="nav-label">
+                    Documenti
+                </span>
+
+            </a>
+
+
+
+            <!-- CALENDARIO -->
+
+            <a
+                href="../calendario.html"
+                class="nav-item">
+
+                <span class="nav-icon">
+                    □
+                </span>
+
+                <span class="nav-label">
+                    Calendario
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+
+        <!-- =========================
+             SIDE NAV FOOTER
+        ========================== -->
+
+        <div class="side-nav-bottom">
+
+            <span class="status-dot"></span>
+
+            <span>
+                Comunità
+            </span>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =========================
+         OVERLAY
+    ========================== -->
+
+    <div
+        class="nav-overlay"
+        id="navOverlay">
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- ==========================================================
+     COSTITUZIONE — FLOATING READING CONTROLS
+========================================================== -->
+
+<div class="constitution-tools" id="constitutionTools">
+
+    <!-- EXPANDED CONTROLS -->
+
+    <div class="constitution-tools-menu" id="constitutionToolsMenu">
+
+        <!-- TORNA ALL'INDICE -->
+
+        <button
+            type="button"
+            class="constitution-tool"
+            id="constitutionBackToIndex"
+            aria-label="Torna all'indice"
+            title="Torna all'indice">
+
+            ↑
+
+        </button>
+
+
+        <!-- SEPARATION BETWEEN NAVIGATION AND TEXT SIZE -->
+
+        <div class="constitution-tools-gap"></div>
+
+
+        <!-- AUMENTA TESTO -->
+
+        <button
+            type="button"
+            class="constitution-tool"
+            id="constitutionIncrease"
+            aria-label="Aumenta dimensione del testo"
+            title="Aumenta testo">
+
+            +
+
+        </button>
+
+
+        <!-- DIMINUISCI TESTO -->
+
+        <button
+            type="button"
+            class="constitution-tool"
+            id="constitutionDecrease"
+            aria-label="Diminuisci dimensione del testo"
+            title="Diminuisci testo">
+
+            −
+
+        </button>
+
+    </div>
+
+
+    <!-- MAIN BUBBLE -->
+
+    <button
+        type="button"
+        class="constitution-tools-toggle"
+        id="constitutionToolsToggle"
+        aria-label="Apri strumenti di lettura"
+        aria-expanded="false"
+        aria-controls="constitutionToolsMenu">
+
+        ⋮
+
+    </button>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- =========================
+         MAIN APP
+    ========================== -->
+
+    <main class="app">
+
+
+
+        <!-- ======================================================
+             TOP BAR
+        ======================================================= -->
+
+        <header class="topbar">
+
+
+            <div class="topbar-left">
+
+                <div class="mobile-title">
+
+                    <img
+                        src="../img/logo.png"
+                        alt="Logo Figli di Santa Maria Immacolata"
+                        class="topbar-logo">
+
+                    <span>
+                        CONGREGAZIONE DEI
+                        <br>
+                        Figli di Santa Maria Immacolata
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="topbar-right">
+
+
+                <button
+                    class="icon-button"
+                    type="button"
+                    title="Notifiche"
+                    aria-label="Notifiche">
+
+                    ♧
+
+                </button>
+
+
+
+                <button
+                    class="profile-button"
+                    type="button"
+                    aria-label="Profilo">
+
+                    <span>
+                        R
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ==========================================================
+     START HERE: CONTENT
+========================================================== -->
+
+<div class="pdf-container">
+        <!-- 2. Use the custom element and target a specific page if desired -->
+        <pdfjs-viewer-element 
+            src="pdf/annuariofsmi.pdf" 
+            page="1" 
+            viewer-path="https://jsdelivr.net">
+        </pdfjs-viewer-element>
+    </div>
+
+
+
+
+
+<!-- ==========================================================
+     END HERE: CONTENT
+========================================================== -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- ======================================================
+             FOOTER
+        ======================================================= -->
+
+        <footer>
+
+            <span>
+                © 2026 Congregazione Pontificia
+            </span>
+
+            <span>
+                Servire · Pregare · Testimoniare
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+
+    <!-- ==========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script src="../js/app.js"></script>
+    <script src="js/documenti.js"></script>
+
+
+</body>
+
+</html>
