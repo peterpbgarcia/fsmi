@@ -1,0 +1,518 @@
+
+:root {
+  --main-blue: #4AAEE8;
+  --light-blue: #eaf6ff;
+  --accent-blue: #1683c6;
+  --text-color: #243746;
+  --muted-blue: #5d7688;
+  --gold: #c89b3c;
+  --card-shadow: 0 8px 22px rgba(28, 102, 145, .13);
+}
+
+/* Celebration section */
+.celebrations {
+  width: 100%;
+  min-width: 0;
+  flex: 0 1 25%;
+  min-height: 125px;
+  max-height: 230px;
+  box-sizing: border-box;
+}
+
+.celebration-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  max-height: inherit;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Horizontal swipe-only slider */
+.celebration-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  max-height: inherit;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-snap-stop: always;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+.celebration-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual card */
+.celebration-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 28%) minmax(0, 1fr);
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  min-height: 125px;
+  max-height: 230px;
+  overflow: hidden;
+  isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  border: 1px solid rgba(74, 174, 232, .25);
+  border-radius: 17px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(234, 246, 255, .95),
+      transparent 44%
+    ),
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #fbfdff 58%,
+      #f0f9ff 100%
+    );
+  box-shadow: var(--card-shadow);
+  color: var(--text-color);
+  box-sizing: border-box;
+}
+
+.celebration-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -35px;
+  right: -30px;
+  width: 112px;
+  height: 112px;
+  border: 1px solid rgba(74, 174, 232, .22);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 10px rgba(74, 174, 232, .045),
+    0 0 0 22px rgba(74, 174, 232, .03);
+  pointer-events: none;
+}
+
+/* Photo */
+.celebration-photo {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(145deg, #d9effc, #f5fbff);
+  border-right: 3px solid var(--main-blue);
+}
+
+.celebration-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 125px;
+  max-height: 230px;
+  object-fit: cover;
+  object-position: center 25%;
+}
+
+.celebration-photo.is-placeholder {
+  display: grid;
+  place-items: center;
+}
+
+.celebration-photo.is-placeholder::after {
+  content: "✦";
+  color: rgba(22, 131, 198, .45);
+  font-size: 2.1rem;
+}
+
+/* Card text */
+.celebration-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  gap: 4px;
+  padding: clamp(10px, 1.7vw, 17px) clamp(12px, 2vw, 21px);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.celebration-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  color: var(--accent-blue);
+  font: 700 .68rem/1.15 system-ui, sans-serif;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.celebration-title {
+  margin: 0;
+  color: var(--accent-blue);
+  font: 700 clamp(1.15rem, 2.2vw, 1.75rem)/1.04 Georgia, "Times New Roman", serif;
+  letter-spacing: -.025em;
+}
+
+.celebration-name {
+  max-width: 100%;
+  margin: 0;
+  color: var(--text-color);
+  font: 700 clamp(.9rem, 1.45vw, 1.08rem)/1.18 Georgia, "Times New Roman", serif;
+  overflow-wrap: anywhere;
+}
+
+.celebration-date {
+  margin: 1px 0 0;
+  color: var(--muted-blue);
+  font: 600 .73rem/1.25 system-ui, sans-serif;
+}
+
+.celebration-message {
+  max-width: 42em;
+  margin: 2px 0 0;
+  color: #425c6d;
+  font: italic .82rem/1.3 Georgia, "Times New Roman", serif;
+}
+
+.celebration-message:empty {
+  display: none;
+}
+
+/* Birthday card: warm gold details */
+.celebration-birthday {
+  border-color: rgba(200, 155, 60, .38);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 247, 227, .98),
+      transparent 47%
+    ),
+    linear-gradient(135deg, #ffffff 0%, #fffdf8 58%, #fff7e3 100%);
+}
+
+.celebration-birthday .celebration-photo {
+  border-right-color: var(--gold);
+}
+
+.celebration-birthday .celebration-icon,
+.celebration-birthday .celebration-title {
+  color: #a87919;
+}
+
+.celebration-birthday::before {
+  border-color: rgba(200, 155, 60, .24);
+}
+
+/* Religious profession card */
+.celebration-profession {
+  border-color: rgba(74, 174, 232, .38);
+}
+
+.celebration-profession .celebration-photo {
+  border-right-color: var(--accent-blue);
+}
+
+/* Ordination card */
+.celebration-ordination {
+  border-color: rgba(22, 131, 198, .38);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(220, 241, 255, .98),
+      transparent 47%
+    ),
+    linear-gradient(135deg, #ffffff 0%, #f9fdff 58%, #eaf6ff 100%);
+}
+
+.celebration-ordination .celebration-photo {
+  border-right-color: #126da5;
+}
+
+/* Grouped celebrations */
+.celebration-group-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-color: rgba(200, 155, 60, .36);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 247, 227, .88),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #ffffff 0%, #fbfdff 65%, #fffaf0 100%);
+}
+
+.celebration-group-card::before {
+  top: -55px;
+  right: -25px;
+  width: 135px;
+  height: 135px;
+  border-color: rgba(200, 155, 60, .2);
+}
+
+.celebration-group-heading {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  padding: 12px 17px 9px;
+  border-bottom: 1px solid rgba(200, 155, 60, .24);
+  background: rgba(255, 255, 255, .7);
+}
+
+.celebration-group-title {
+  margin: 0;
+  color: #986d16;
+  font: 700 clamp(1.05rem, 2vw, 1.35rem)/1.12 Georgia, "Times New Roman", serif;
+}
+
+.celebration-group-date {
+  margin: 3px 0 0;
+  color: var(--muted-blue);
+  font: 600 .7rem/1.2 system-ui, sans-serif;
+  text-transform: capitalize;
+}
+
+.celebration-group-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 4px 17px 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 155, 60, .55) transparent;
+}
+
+.celebration-group-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.celebration-group-list::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(200, 155, 60, .55);
+}
+
+.celebration-group-person {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 7px;
+  align-items: start;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(74, 174, 232, .15);
+}
+
+.celebration-group-person:last-child {
+  border-bottom: 0;
+}
+
+.celebration-group-icon {
+  padding-top: 1px;
+  font-size: .95rem;
+  text-align: center;
+}
+
+.celebration-group-details {
+  min-width: 0;
+}
+
+.celebration-group-name {
+  margin: 0;
+  color: var(--text-color);
+  font: 700 .82rem/1.2 Georgia, "Times New Roman", serif;
+  overflow-wrap: anywhere;
+}
+
+.celebration-group-type {
+  margin: 2px 0 0;
+  color: #5a7180;
+  font: 600 .69rem/1.2 system-ui, sans-serif;
+}
+
+/* Loading and empty states */
+.celebration-loading {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  color: var(--muted-blue);
+  background: rgba(234, 246, 255, .94);
+  font: 600 .85rem/1.35 system-ui, sans-serif;
+  text-align: center;
+}
+
+.celebration-loading[hidden] {
+  display: none !important;
+}
+
+.celebration-empty {
+  display: flex;
+  flex: 0 0 100%;
+  min-width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 1px solid rgba(74, 174, 232, .25);
+  border-radius: 17px;
+  color: var(--muted-blue);
+  background: linear-gradient(135deg, #fff, var(--light-blue));
+  text-align: center;
+  font: 600 .85rem/1.45 system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .celebrations {
+    flex-basis: 25%;
+    min-height: 120px;
+    max-height: 190px;
+  }
+
+  .celebration-carousel,
+  .celebration-track {
+    min-height: 120px;
+    max-height: 190px;
+  }
+
+  .celebration-card {
+    min-height: 120px;
+    max-height: 190px;
+  }
+
+  .celebration-photo img {
+    min-height: 120px;
+    max-height: 190px;
+  }
+
+  .celebration-content {
+    gap: 3px;
+    padding: 9px 11px;
+  }
+
+  .celebration-icon {
+    font-size: .6rem;
+    letter-spacing: .06em;
+  }
+
+  .celebration-title {
+    font-size: clamp(1.05rem, 5vw, 1.45rem);
+  }
+
+  .celebration-name {
+    font-size: clamp(.82rem, 3.5vw, .98rem);
+  }
+
+  .celebration-date {
+    font-size: .67rem;
+  }
+
+  .celebration-message {
+    font-size: .73rem;
+    line-height: 1.22;
+  }
+
+  .celebration-group-heading {
+    padding: 10px 13px 7px;
+  }
+
+  .celebration-group-list {
+    padding: 3px 13px 6px;
+  }
+
+  .celebration-group-person {
+    padding: 6px 0;
+  }
+}
+
+/* Short landscape screens */
+@media (max-height: 500px) and (orientation: landscape) {
+  .celebrations {
+    flex-basis: 32%;
+    min-height: 105px;
+    max-height: 155px;
+  }
+
+  .celebration-carousel,
+  .celebration-track {
+    min-height: 105px;
+    max-height: 155px;
+  }
+
+  .celebration-card {
+    min-height: 105px;
+    max-height: 155px;
+  }
+
+  .celebration-photo img {
+    min-height: 105px;
+    max-height: 155px;
+  }
+
+  .celebration-content {
+    padding: 7px 11px;
+    gap: 2px;
+  }
+
+  .celebration-message {
+    font-size: .7rem;
+  }
+}
+
+/* Very narrow screens */
+@media (max-width: 360px) {
+  .celebration-card {
+    grid-template-columns: minmax(0, 25%) minmax(0, 1fr);
+  }
+
+  .celebration-content {
+    padding: 8px 9px;
+  }
+
+  .celebration-icon {
+    font-size: .56rem;
+  }
+
+  .celebration-title {
+    font-size: 1.03rem;
+  }
+
+  .celebration-name {
+    font-size: .8rem;
+  }
+
+  .celebration-message {
+    font-size: .68rem;
+  }
+
+  .celebration-group-heading {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .celebration-group-list {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-track {
+    scroll-behavior: auto;
+  }
+}
