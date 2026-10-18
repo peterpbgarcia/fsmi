@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -19,13 +18,23 @@
 
 <body class="constitution-page">
 
-    <main class="constitution-document" id="constitutionTop">
+    <main
+        class="constitution-document"
+        id="constitutionTop"
+        data-workbook="../dat/costituzioni.xlsx"
+        data-document="costituzioni"
+    >
 
         <!-- DOCUMENT TITLE -->
         <section class="constitution-intro">
-            <h1 class="constitution-title">Costituzioni FSMI</h1>
+            <h1 class="constitution-title">
+                Costituzioni FSMI
+            </h1>
 
-            <p class="constitution-edition" id="constitutionEditionDate">
+            <p
+                class="constitution-edition"
+                id="constitutionEditionDate"
+            >
                 Edizione del [data dell'edizione]
             </p>
         </section>
@@ -33,6 +42,7 @@
 
         <!-- SEARCH -->
         <section class="constitution-search-section">
+
             <label
                 class="visually-hidden"
                 for="constitutionSearch"
@@ -41,6 +51,7 @@
             </label>
 
             <div class="constitution-search-box">
+
                 <svg
                     class="constitution-search-icon"
                     viewBox="0 0 24 24"
@@ -54,6 +65,7 @@
                         stroke="currentColor"
                         stroke-width="1.8"
                     />
+
                     <path
                         d="M16 16l4.5 4.5"
                         fill="none"
@@ -83,6 +95,7 @@
                 >
                     &times;
                 </button>
+
             </div>
 
             <!-- SEARCH SUGGESTIONS -->
@@ -101,22 +114,16 @@
                 aria-live="polite"
                 hidden
             ></p>
+
         </section>
 
-
-            <p
-                id="constitutionSearchStatus"
-                class="constitution-search-status"
-                aria-live="polite"
-                hidden
-            ></p>
-        </section>
 
         <!-- EXPANDABLE INDEX -->
         <section
             class="constitution-index-section"
             aria-labelledby="constitutionIndexTitle"
         >
+
             <h2
                 id="constitutionIndexTitle"
                 class="constitution-index-title"
@@ -129,20 +136,25 @@
                 class="constitution-index"
                 aria-label="Indice delle Costituzioni"
             ></nav>
+
         </section>
+
 
         <!-- DOCUMENT CONTENT -->
         <section
             class="constitution-reading"
             aria-label="Testo delle Costituzioni"
         >
+
             <div
                 id="constitutionContent"
                 class="constitution-content"
             ></div>
+
         </section>
 
     </main>
+
 
     <!-- STATUS / ERROR MESSAGE -->
     <p
@@ -153,14 +165,17 @@
         hidden
     ></p>
 
+
     <!-- FIXED READING CONTROLS -->
     <div
         class="constitution-reading-controls"
         role="toolbar"
         aria-label="Controlli di lettura"
     >
+
         <div class="constitution-text-controls">
 
+            <!-- DECREASE TEXT SIZE -->
             <button
                 type="button"
                 id="constitutionDecrease"
@@ -171,6 +186,7 @@
                 −
             </button>
 
+            <!-- INCREASE TEXT SIZE -->
             <button
                 type="button"
                 id="constitutionIncrease"
@@ -183,6 +199,8 @@
 
         </div>
 
+
+        <!-- BACK TO TOP -->
         <button
             type="button"
             id="constitutionBackToTop"
@@ -190,7 +208,11 @@
             aria-label="Torna all'inizio del documento"
             title="Torna in alto"
         >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
                 <path
                     d="M12 19V5M5.5 11.5L12 5l6.5 6.5"
                     fill="none"
@@ -200,18 +222,20 @@
                     stroke-linejoin="round"
                 />
             </svg>
+
         </button>
 
     </div>
+
 
     <!-- SHARED APPLICATION SCRIPTS -->
     <script src="../js/app.js"></script>
     <script src="js/documenti.js"></script>
 
-    <!-- XLSX LIBRARY: MUST LOAD BEFORE THE CONSTITUTION RENDERER -->
+    <!-- XLSX LIBRARY: LOAD BEFORE THE RENDERER -->
     <script src="../js/xlsx.full.min.js"></script>
 
-    <!-- CONSTITUTION RENDERER AND ALL PAGE CONTROLS -->
+    <!-- SHARED DOCUMENT RENDERER -->
     <script src="js/constitution.js"></script>
 
 </body>

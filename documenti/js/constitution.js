@@ -1,21 +1,35 @@
-
 "use strict";
 
 document.addEventListener("DOMContentLoaded", initConstitution);
 
 function initConstitution() {
-    const EXCEL_PATH = "../dat/costituzioni.xlsx";
 
-    const PART_ORDER = [
-    "Preliminari",
-    "Parte Prima",
-    "Parte Seconda",
-    "Parte Terza",
-    "Parte Quarta",
-    "Parte Quinta"
-];
+    // ---------------------------------------------------------
+    // DOCUMENT CONFIGURATION
+    // ---------------------------------------------------------
 
-    const EXCLUDED_PARTS = new Set();
+    const documentElement = document.querySelector(".constitution-document");
+
+    const DOCUMENT_TYPE = (
+        documentElement?.dataset.document || "costituzioni"
+    ).toLowerCase();
+
+    const EXCEL_PATH =
+        documentElement?.dataset.workbook || "../dat/costituzioni.xlsx";
+
+    const IS_COSTITUZIONI = DOCUMENT_TYPE === "costituzioni";
+
+    const DOCUMENT_NAME = IS_COSTITUZIONI
+        ? "Costituzioni"
+        : "Direttorio";
+
+
+
+    // Exclude PRELIMINARI only from the Costituzioni.
+    const EXCLUDED_PARTS = IS_COSTITUZIONI
+        ? new Set(["preliminari"])
+        : new Set();
+
     const MIN_FONT_SIZE = 13;
     const MAX_FONT_SIZE = 28;
     const FONT_STEP = 1;
@@ -35,7 +49,7 @@ function initConstitution() {
 
     if (!el.index || !el.content) {
         console.error(
-            "Costituzioni: #constitutionIndex o #constitutionContent non trovato."
+            `${DOCUMENT_NAME}: #constitutionIndex o #constitutionContent non trovato.`
         );
         return;
     }
@@ -73,6 +87,7 @@ function initConstitution() {
 
     function cell(row, column) {
         const wanted = normalizeColumn(column);
+
         const key = Object.keys(row).find(
             name => normalizeColumn(name) === wanted
         );
@@ -113,7 +128,7 @@ function initConstitution() {
     // ---------------------------------------------------------
 
     async function loadExcel() {
-        showMessage("Caricamento delle Costituzioni…");
+        showMessage(`Caricamento del ${DOCUMENT_NAME}…`);
 
         try {
             const response = await fetch(EXCEL_PATH, {
@@ -125,13 +140,19 @@ function initConstitution() {
             }
 
             const buffer = await response.arrayBuffer();
-            const workbook = XLSX.read(buffer, { type: "array" });
+
+            const workbook = XLSX.read(buffer, {
+                type: "array"
+            });
 
             if (!workbook.SheetNames.length) {
                 throw new Error("Nessun foglio Excel trovato.");
             }
 
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const worksheet = workbook.Sheets[
+                workbook.SheetNames[0]
+            ];
+
             const rows = XLSX.utils.sheet_to_json(worksheet, {
                 defval: "",
                 raw: false
@@ -142,15 +163,20 @@ function initConstitution() {
             }
 
             validateColumns(rows);
+
             parts = groupRows(rows);
 
             renderAll();
             hideMessage();
 
         } catch (error) {
-            console.error("Errore nel caricamento delle Costituzioni:", error);
+            console.error(
+                `Errore nel caricamento del ${DOCUMENT_NAME}:`,
+                error
+            );
+
             showMessage(
-                "Impossibile caricare le Costituzioni. " +
+                `Impossibile caricare il ${DOCUMENT_NAME}. ` +
                 "Controlla il file Excel e il percorso."
             );
         }
@@ -158,19 +184,6 @@ function initConstitution() {
 
     // ---------------------------------------------------------
     // GROUP EXCEL ROWS
-    //
-    // Structure:
-    // Part
-    //   Chapter
-    //     Subsection heading (SUBTITLE, once)
-    //       Original row content
-    //       Original row content
-    //     Next subsection heading
-    //       Original row content
-    //
-    // Repeated PART, CHAPTER and SUBTITLE values do not produce
-    // repeated headings. Blank subtitle cells continue the
-    // current subsection until a different subtitle appears.
     // ---------------------------------------------------------
 
     function groupRows(rows) {
@@ -191,6 +204,7 @@ function initConstitution() {
             // A populated PART cell starts or continues a part.
             if (partName) {
                 const partKey = normalize(partName);
+
                 skippingExcludedPart = EXCLUDED_PARTS.has(partKey);
 
                 if (skippingExcludedPart) {
@@ -235,7 +249,7 @@ function initConstitution() {
                     normalize(currentChapter.name) !== chapterKey
                 ) {
                     currentChapter = {
-                        id: `constitution-chapter-${++chapterCounter}`,
+                        id: `${DOCUMENT_TYPE}-chapter-${++chapterCounter}`,
                         name: chapterName,
                         items: []
                     };
@@ -272,10 +286,7 @@ function initConstitution() {
                 return;
             }
 
-            /*
-             * A new, different subtitle starts a new subsection.
-             * Repeating the same subtitle continues the existing one.
-             */
+            // A new subtitle starts a new subsection.
             if (subtitle) {
                 const subtitleKey = normalize(subtitle);
 
@@ -296,11 +307,7 @@ function initConstitution() {
                 return;
             }
 
-            /*
-             * Blank SUBTITLE means continuation of the current
-             * subsection. Before the first subsection, the row
-             * remains a normal chapter entry.
-             */
+            // Blank subtitle continues the current subsection.
             if (currentSubtitleGroup) {
                 currentSubtitleGroup.rows.push(row);
             } else {
@@ -314,26 +321,15 @@ function initConstitution() {
         return sortParts(result);
     }
 
-    function sortParts(list) {
-        const order = new Map(
-            PART_ORDER.map((name, index) => [normalize(name), index])
-        );
+    // ---------------------------------------------------------
+    // PART ORDER
+    // ---------------------------------------------------------
 
-        return list.sort((a, b) => {
-            const aKey = normalize(a.name);
-            const bKey = normalize(b.name);
-
-            const aOrder = order.has(aKey)
-                ? order.get(aKey)
-                : Number.MAX_SAFE_INTEGER;
-
-            const bOrder = order.has(bKey)
-                ? order.get(bKey)
-                : Number.MAX_SAFE_INTEGER;
-
-            return aOrder - bOrder;
-        });
-    }
+function sortParts(list) {
+    // Preserve the order in which parts appear in Excel.
+    // New parts added to Excel are detected automatically.
+    return list;
+}
 
     // ---------------------------------------------------------
     // SEARCH
@@ -367,7 +363,9 @@ function initConstitution() {
 
         if (item.kind === "chapter") {
             return normalize(item.chapter.name).includes(query) ||
-                item.chapter.items.some(child => itemMatches(child, query));
+                item.chapter.items.some(
+                    child => itemMatches(child, query)
+                );
         }
 
         return false;
@@ -383,11 +381,13 @@ function initConstitution() {
                 if (rowMatches(item.row, query)) {
                     result.push(item);
                 }
+
                 return;
             }
 
             if (item.kind === "subtitle") {
                 const titleMatches = normalize(item.name).includes(query);
+
                 const matchingRows = item.rows.filter(
                     row => rowMatches(row, query)
                 );
@@ -403,13 +403,21 @@ function initConstitution() {
                         rows: matchingRows
                     });
                 }
+
                 return;
             }
 
             if (item.kind === "chapter") {
                 const chapter = item.chapter;
-                const titleMatches = normalize(chapter.name).includes(query);
-                const matchingItems = filterItems(chapter.items, query);
+
+                const titleMatches = normalize(
+                    chapter.name
+                ).includes(query);
+
+                const matchingItems = filterItems(
+                    chapter.items,
+                    query
+                );
 
                 if (titleMatches) {
                     result.push({
@@ -467,36 +475,51 @@ function initConstitution() {
                     "constitution-index-empty"
                 )
             );
+
             return;
         }
 
         visibleParts.forEach(part => {
             const details = document.createElement("details");
+
             details.className = "constitution-index-part";
 
-            if (query) details.open = true;
+            if (query) {
+                details.open = true;
+            }
 
             const summary = document.createElement("summary");
+
             summary.className = "constitution-index-part-title";
+
             appendHighlightedText(summary, part.name, query);
             details.appendChild(summary);
 
             const chapterContainer = document.createElement("div");
-            chapterContainer.className = "constitution-index-chapters";
+
+            chapterContainer.className =
+                "constitution-index-chapters";
 
             part.items.forEach(item => {
                 if (item.kind !== "chapter") return;
 
                 const link = document.createElement("a");
+
                 link.className = "constitution-index-chapter";
                 link.href = `#${item.chapter.id}`;
 
-                appendHighlightedText(link, item.chapter.name, query);
+                appendHighlightedText(
+                    link,
+                    item.chapter.name,
+                    query
+                );
 
                 link.addEventListener("click", event => {
                     event.preventDefault();
 
-                    const target = document.getElementById(item.chapter.id);
+                    const target = document.getElementById(
+                        item.chapter.id
+                    );
 
                     if (target) {
                         target.scrollIntoView({
@@ -530,19 +553,28 @@ function initConstitution() {
                     "constitution-no-results"
                 )
             );
+
             return;
         }
 
         visibleParts.forEach(part => {
             const partSection = document.createElement("section");
+
             partSection.className = "constitution-part";
             partSection.style.display = "block";
-partSection.style.width = "100%";
-partSection.style.maxWidth = "none";
+            partSection.style.width = "100%";
+            partSection.style.maxWidth = "none";
 
             const partHeading = document.createElement("h2");
+
             partHeading.className = "constitution-part-title";
-            appendHighlightedText(partHeading, part.name, query);
+
+            appendHighlightedText(
+                partHeading,
+                part.name,
+                query
+            );
+
             partSection.appendChild(partHeading);
 
             renderItems(part.items, partSection, query);
@@ -554,25 +586,39 @@ partSection.style.maxWidth = "none";
     function renderItems(items, container, query) {
         items.forEach(item => {
             if (item.kind === "row") {
-                container.appendChild(renderRow(item.row, query));
+                container.appendChild(
+                    renderRow(item.row, query)
+                );
+
                 return;
             }
 
             if (item.kind === "subtitle") {
-                container.appendChild(renderSubtitleGroup(item, query));
+                container.appendChild(
+                    renderSubtitleGroup(item, query)
+                );
+
                 return;
             }
 
             if (item.kind === "chapter") {
                 const chapter = item.chapter;
+
                 const section = document.createElement("section");
 
                 section.className = "constitution-chapter";
                 section.id = chapter.id;
 
                 const heading = document.createElement("h3");
+
                 heading.className = "constitution-chapter-title";
-                appendHighlightedText(heading, chapter.name, query);
+
+                appendHighlightedText(
+                    heading,
+                    chapter.name,
+                    query
+                );
+
                 section.appendChild(heading);
 
                 renderItems(
@@ -588,11 +634,19 @@ partSection.style.maxWidth = "none";
 
     function renderSubtitleGroup(group, query) {
         const section = document.createElement("section");
+
         section.className = "constitution-subsection";
 
         const heading = document.createElement("h4");
+
         heading.className = "constitution-subsection-title";
-        appendHighlightedText(heading, group.name, query);
+
+        appendHighlightedText(
+            heading,
+            group.name,
+            query
+        );
+
         section.appendChild(heading);
 
         group.rows.forEach(row => {
@@ -602,108 +656,147 @@ partSection.style.maxWidth = "none";
         return section;
     }
 
-// ---------------------------------------------------------
-// ROW RENDERING
-//
-// SUBTITLE is rendered by renderSubtitleGroup(), not here.
-// ---------------------------------------------------------
+    // ---------------------------------------------------------
+    // ROW RENDERING
+    // ---------------------------------------------------------
 
-function renderRow(row, query) {
-    const type = normalize(row.type);
+    function renderRow(row, query) {
+        const type = normalize(row.type);
 
-    const isQuote = [
-        "quote",
-        "quotation",
-        "citazione"
-    ].includes(type);
+        const isQuote = [
+            "quote",
+            "quotation",
+            "citazione"
+        ].includes(type);
 
-    const isCanon = [
-        "canon",
-        "canone",
-        "canone numerato"
-    ].includes(type);
+        const isCanon = [
+            "canon",
+            "canone",
+            "canone numerato"
+        ].includes(type);
 
-    const isText = [
-        "text",
-        "testo"
-    ].includes(type);
+        const isText = [
+            "text",
+            "testo"
+        ].includes(type);
 
-    // QUOTATIONS
-    if (isQuote) {
-        return renderQuote(row, query);
-    }
-
-    // GENERAL TEXT — Excel TYPE = text
-    if (isText) {
-        const article = document.createElement("article");
-
-        article.id = `constitution-row-${row.sourceIndex}`;
-        article.className = "constitution-text-entry";
-
-        const content = document.createElement("div");
-        content.className = "constitution-text-content";
-
-        if (row.text) {
-            appendHighlightedText(content, row.text, query);
+        // QUOTATIONS
+        if (isQuote) {
+            return renderQuote(row, query);
         }
 
-        article.appendChild(content);
+        // GENERAL TEXT
+        if (isText) {
+            const article = document.createElement("article");
+
+            article.id = `${DOCUMENT_TYPE}-row-${row.sourceIndex}`;
+            article.className = "constitution-text-entry";
+
+            const content = document.createElement("div");
+
+            content.className = "constitution-text-content";
+
+            if (row.text) {
+                appendHighlightedText(
+                    content,
+                    row.text,
+                    query
+                );
+            }
+
+            article.appendChild(content);
+
+            return article;
+        }
+
+        // CANONS AND OTHER ROW TYPES
+        const article = document.createElement("article");
+
+        article.id = `${DOCUMENT_TYPE}-row-${row.sourceIndex}`;
+
+        article.className = isCanon
+            ? "document-canon canon-row"
+            : "constitution-entry";
+
+        if (isCanon && row.number) {
+            const number = document.createElement("div");
+
+            number.className = "canon-number";
+
+            appendHighlightedText(
+                number,
+                row.number,
+                query
+            );
+
+            article.appendChild(number);
+        }
+
+        const body = document.createElement("div");
+
+        body.className = isCanon
+            ? "canon-body"
+            : "canon-entry";
+
+        if (row.text) {
+            const text = document.createElement("div");
+
+            text.className = "canon-text";
+
+            appendHighlightedText(
+                text,
+                row.text,
+                query
+            );
+
+            body.appendChild(text);
+        }
+
+        if (row.subtext) {
+            const subtext = document.createElement("div");
+
+            subtext.className = "canon-subtext";
+            subtext.textContent = row.subtext;
+
+            body.appendChild(subtext);
+        }
+
+        article.appendChild(body);
+
         return article;
     }
 
-    // CANONS AND OTHER EXISTING ROW TYPES
-    const article = document.createElement("article");
-
-    article.id = `constitution-row-${row.sourceIndex}`;
-
-    article.className = isCanon
-        ? "document-canon canon-row"
-        : "constitution-entry";
-
-    if (isCanon && row.number) {
-        const number = document.createElement("div");
-        number.className = "canon-number";
-        appendHighlightedText(number, row.number, query);
-        article.appendChild(number);
-    }
-
-    const body = document.createElement("div");
-    body.className = isCanon ? "canon-body" : "canon-entry";
-
-    if (row.text) {
-        const text = document.createElement("div");
-        text.className = "canon-text";
-        appendHighlightedText(text, row.text, query);
-        body.appendChild(text);
-    }
-
-    if (row.subtext) {
-        const subtext = document.createElement("div");
-        subtext.className = "canon-subtext";
-        subtext.textContent = row.subtext;
-        body.appendChild(subtext);
-    }
-
-    article.appendChild(body);
-    return article;
-}
-
     function renderQuote(row, query) {
         const quote = document.createElement("blockquote");
-        quote.id = `constitution-row-${row.sourceIndex}`;
+
+        quote.id = `${DOCUMENT_TYPE}-row-${row.sourceIndex}`;
         quote.className = "constitution-quote document-quote";
 
         if (row.text) {
             const text = document.createElement("p");
+
             text.className = "constitution-quote-text";
-            appendHighlightedText(text, row.text, query);
+
+            appendHighlightedText(
+                text,
+                row.text,
+                query
+            );
+
             quote.appendChild(text);
         }
 
         if (row.subtext) {
             const source = document.createElement("cite");
+
             source.className = "constitution-quote-source";
-            appendHighlightedText(source, row.subtext, query);
+
+            appendHighlightedText(
+                source,
+                row.subtext,
+                query
+            );
+
             quote.appendChild(source);
         }
 
@@ -722,9 +815,9 @@ function renderRow(row, query) {
             return;
         }
 
-        // Match normalized characters while preserving original accents.
         const normalizedChars = [];
         const positions = [];
+
         let offset = 0;
 
         for (const character of text) {
@@ -735,6 +828,7 @@ function renderRow(row, query) {
 
             for (const char of normalizedCharacter) {
                 normalizedChars.push(char);
+
                 positions.push({
                     start: offset,
                     end: offset + character.length
@@ -746,6 +840,7 @@ function renderRow(row, query) {
 
         const normalizedText = normalizedChars.join("");
         const fragment = document.createDocumentFragment();
+
         let searchFrom = 0;
         let originalEnd = 0;
         let match;
@@ -754,18 +849,28 @@ function renderRow(row, query) {
             (match = normalizedText.indexOf(query, searchFrom)) !== -1
         ) {
             const first = positions[match];
-            const last = positions[match + query.length - 1];
+
+            const last = positions[
+                match + query.length - 1
+            ];
 
             if (!first || !last) break;
 
             if (first.start > originalEnd) {
                 fragment.appendChild(
-                    document.createTextNode(text.slice(originalEnd, first.start))
+                    document.createTextNode(
+                        text.slice(originalEnd, first.start)
+                    )
                 );
             }
 
             const mark = document.createElement("mark");
-            mark.textContent = text.slice(first.start, last.end);
+
+            mark.textContent = text.slice(
+                first.start,
+                last.end
+            );
+
             fragment.appendChild(mark);
 
             originalEnd = last.end;
@@ -779,22 +884,17 @@ function renderRow(row, query) {
 
         if (originalEnd < text.length) {
             fragment.appendChild(
-                document.createTextNode(text.slice(originalEnd))
+                document.createTextNode(
+                    text.slice(originalEnd)
+                )
             );
         }
 
         element.appendChild(fragment);
     }
 
-
-
-
-
-
-
     // ---------------------------------------------------------
     // SEARCH SUGGESTIONS
-    // Uses the existing Excel data and row-matching logic.
     // ---------------------------------------------------------
 
     function isCanonRow(row) {
@@ -812,6 +912,7 @@ function renderRow(row, query) {
             items.forEach(item => {
                 if (item.kind === "row") {
                     results.push(item.row);
+
                 } else if (item.kind === "subtitle") {
                     results.push({
                         sourceIndex: item.rows[0]?.sourceIndex,
@@ -825,6 +926,7 @@ function renderRow(row, query) {
                     });
 
                     results.push(...item.rows);
+
                 } else if (item.kind === "chapter") {
                     collect(item.chapter.items);
                 }
@@ -840,12 +942,14 @@ function renderRow(row, query) {
 
     function getSuggestionTarget(row) {
         return document.getElementById(
-            `constitution-row-${row.sourceIndex}`
+            `${DOCUMENT_TYPE}-row-${row.sourceIndex}`
         );
     }
 
     function renderSuggestions() {
-        if (!el.suggestions || !el.search || !parts.length) return;
+        if (!el.suggestions || !el.search || !parts.length) {
+            return;
+        }
 
         const rawQuery = el.search.value.trim();
         const query = normalize(rawQuery);
@@ -857,11 +961,11 @@ function renderRow(row, query) {
 
         const rows = getSuggestionRows();
 
-        // A numeric query should prioritize an exact canon number.
-        const numberQuery = query.replace(
-            /^(canone|canon|n)\s*/,
-            ""
-        ).replace(/\.$/, "").trim();
+        // Numeric searches prioritize exact canon-number matches.
+        const numberQuery = query
+            .replace(/^(canone|canon|n)\s*/, "")
+            .replace(/\.$/, "")
+            .trim();
 
         const exactCanons = rows.filter(row =>
             isCanonRow(row) &&
@@ -882,7 +986,6 @@ function renderRow(row, query) {
             return searchable.includes(query);
         });
 
-        // Prefer exact canon-number matches, then other matches.
         const seen = new Set();
         const candidates = [];
 
@@ -899,11 +1002,13 @@ function renderRow(row, query) {
 
         candidates.slice(0, 5).forEach(row => {
             const button = document.createElement("button");
+
             button.type = "button";
             button.className = "constitution-search-suggestion";
             button.setAttribute("role", "option");
 
             const text = document.createElement("span");
+
             text.className = "constitution-suggestion-text";
 
             const displayText = (
@@ -916,6 +1021,7 @@ function renderRow(row, query) {
             ).replace(/\s+/g, " ").trim();
 
             const maxLength = 110;
+
             const excerpt = displayText.length > maxLength
                 ? displayText.slice(0, maxLength).trim() + "…"
                 : displayText;
@@ -925,8 +1031,10 @@ function renderRow(row, query) {
 
             if (isCanonRow(row) && row.number) {
                 const number = document.createElement("span");
+
                 number.className = "constitution-suggestion-number";
                 number.textContent = `Can. ${row.number}`;
+
                 button.appendChild(number);
             }
 
@@ -943,8 +1051,8 @@ function renderRow(row, query) {
     function selectSuggestion(row) {
         if (!el.search) return;
 
-        // Restore the full document before navigating.
         el.search.value = "";
+
         renderAll();
 
         if (el.suggestions) {
@@ -952,7 +1060,6 @@ function renderRow(row, query) {
             el.suggestions.hidden = true;
         }
 
-        // The document is rendered synchronously by renderAll().
         const target = getSuggestionTarget(row);
 
         if (!target) {
@@ -960,6 +1067,7 @@ function renderRow(row, query) {
                 "Destinazione della ricerca non trovata:",
                 row.sourceIndex
             );
+
             return;
         }
 
@@ -970,7 +1078,7 @@ function renderRow(row, query) {
 
         target.classList.remove("constitution-search-target");
 
-        // Restart the temporary highlight if the same row is selected again.
+        // Restart the temporary highlight.
         void target.offsetWidth;
 
         target.classList.add("constitution-search-target");
@@ -987,7 +1095,9 @@ function renderRow(row, query) {
     }
 
     document.addEventListener("click", event => {
-        if (!event.target.closest(".constitution-search-section")) {
+        if (
+            !event.target.closest(".constitution-search-section")
+        ) {
             closeSuggestions();
         }
     });
@@ -997,16 +1107,6 @@ function renderRow(row, query) {
             closeSuggestions();
         }
     });
-
-
-
-
-
-
-
-
-
-
 
     // ---------------------------------------------------------
     // SEARCH STATUS
@@ -1026,18 +1126,28 @@ function renderRow(row, query) {
         function countItems(items) {
             items.forEach(item => {
                 if (item.kind === "row") {
-                    if (rowMatches(item.row, query)) count++;
+                    if (rowMatches(item.row, query)) {
+                        count++;
+                    }
+
                 } else if (item.kind === "subtitle") {
                     item.rows.forEach(row => {
-                        if (rowMatches(row, query)) count++;
+                        if (rowMatches(row, query)) {
+                            count++;
+                        }
                     });
+
                 } else if (item.kind === "chapter") {
-                    countItems(item.filteredItems || item.chapter.items);
+                    countItems(
+                        item.filteredItems || item.chapter.items
+                    );
                 }
             });
         }
 
-        visibleParts.forEach(part => countItems(part.items));
+        visibleParts.forEach(part => {
+            countItems(part.items);
+        });
 
         el.status.textContent = count === 1
             ? "1 risultato trovato"
@@ -1052,22 +1162,22 @@ function renderRow(row, query) {
 
     function bindControls() {
         el.search?.addEventListener("input", () => {
-    clearTimeout(searchTimer);
+            clearTimeout(searchTimer);
 
-    renderSuggestions();
+            renderSuggestions();
 
-    searchTimer = setTimeout(renderAll, 120);
-});
+            searchTimer = setTimeout(renderAll, 120);
+        });
 
         el.clear?.addEventListener("click", () => {
-    if (el.search) {
-        el.search.value = "";
-        el.search.focus();
-    }
+            if (el.search) {
+                el.search.value = "";
+                el.search.focus();
+            }
 
-    renderAll();
-    closeSuggestions();
-});
+            renderAll();
+            closeSuggestions();
+        });
 
         el.decrease?.addEventListener("click", () => {
             setFontSize(fontSize - FONT_STEP);
@@ -1092,6 +1202,7 @@ function renderRow(row, query) {
         );
 
         el.content.style.fontSize = `${fontSize}px`;
+
         el.content.style.setProperty(
             "--constitution-reading-size",
             `${fontSize}px`
@@ -1112,8 +1223,10 @@ function renderRow(row, query) {
 
     function messageElement(text, className) {
         const p = document.createElement("p");
+
         p.className = className;
         p.textContent = text;
+
         return p;
     }
 
