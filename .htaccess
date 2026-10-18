@@ -1,0 +1,37 @@
+# ==========================================================
+# FSMI APP - .htaccess
+# ==========================================================
+
+RewriteEngine On
+
+# ----------------------------------------------------------
+# Do not rewrite these important app files
+# ----------------------------------------------------------
+
+RewriteRule ^manifest\.json$ - [L]
+RewriteRule ^sw\.js$ - [L]
+
+# ----------------------------------------------------------
+# Serve manifest with the correct MIME type
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# Service worker must be JavaScript
+# ----------------------------------------------------------
+
+<Files "sw.js">
+    ForceType application/javascript
+</Files>
+
+# ----------------------------------------------------------
+# Do not rewrite existing files or directories
+# ----------------------------------------------------------
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ----------------------------------------------------------
+# Everything else can go to index.html
+# ----------------------------------------------------------
+
+RewriteRule ^ index.html [L]

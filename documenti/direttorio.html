@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Direttorio FSMI</title>
+
+    <meta
+        name="description"
+        content="Direttorio dei Figli di Santa Maria Immacolata."
+    >
+
+    <!-- SHARED STYLESHEETS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/documenti.css">
+    <link rel="stylesheet" href="css/subcss.css">
+</head>
+
+<body class="constitution-page">
+
+    <main
+        class="constitution-document"
+        id="constitutionTop"
+        data-workbook="../dat/direttorio.xlsx"
+        data-document="direttorio"
+    >
+
+        <!-- DOCUMENT TITLE -->
+        <section class="constitution-intro">
+
+            <h1 class="constitution-title">
+                Direttorio FSMI
+            </h1>
+
+            <p
+                class="constitution-edition"
+                id="constitutionEditionDate"
+            >
+                Edizione del [data dell'edizione]
+            </p>
+
+        </section>
+
+
+        <!-- SEARCH -->
+        <section class="constitution-search-section">
+
+            <label
+                class="visually-hidden"
+                for="constitutionSearch"
+            >
+                Cerca nel Direttorio
+            </label>
+
+            <div class="constitution-search-box">
+
+                <svg
+                    class="constitution-search-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <circle
+                        cx="10.8"
+                        cy="10.8"
+                        r="6.8"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M16 16l4.5 4.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+                </svg>
+
+                <input
+                    type="search"
+                    id="constitutionSearch"
+                    placeholder="Cerca nel Direttorio..."
+                    autocomplete="off"
+                    aria-label="Cerca nel Direttorio"
+                    aria-controls="constitutionSearchSuggestions"
+                    aria-autocomplete="list"
+                >
+
+                <button
+                    type="button"
+                    id="constitutionClearSearch"
+                    class="constitution-clear-search"
+                    aria-label="Cancella ricerca"
+                    title="Cancella ricerca"
+                    hidden
+                >
+                    &times;
+                </button>
+
+            </div>
+
+            <!-- SEARCH SUGGESTIONS -->
+            <div
+                id="constitutionSearchSuggestions"
+                class="constitution-search-suggestions"
+                role="listbox"
+                aria-label="Suggerimenti di ricerca"
+                hidden
+            ></div>
+
+            <!-- SEARCH RESULTS STATUS -->
+            <p
+                id="constitutionSearchStatus"
+                class="constitution-search-status"
+                aria-live="polite"
+                hidden
+            ></p>
+
+        </section>
+
+
+        <!-- EXPANDABLE INDEX -->
+        <section
+            class="constitution-index-section"
+            aria-labelledby="constitutionIndexTitle"
+        >
+
+            <h2
+                id="constitutionIndexTitle"
+                class="constitution-index-title"
+            >
+                Indice
+            </h2>
+
+            <nav
+                id="constitutionIndex"
+                class="constitution-index"
+                aria-label="Indice del Direttorio"
+            ></nav>
+
+        </section>
+
+
+        <!-- DOCUMENT CONTENT -->
+        <section
+            class="constitution-reading"
+            aria-label="Testo del Direttorio"
+        >
+
+            <div
+                id="constitutionContent"
+                class="constitution-content"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- STATUS / ERROR MESSAGE -->
+    <p
+        id="constitutionMessage"
+        class="constitution-message"
+        role="status"
+        aria-live="polite"
+        hidden
+    ></p>
+
+
+    <!-- FIXED READING CONTROLS -->
+    <div
+        class="constitution-reading-controls"
+        role="toolbar"
+        aria-label="Controlli di lettura"
+    >
+
+        <div class="constitution-text-controls">
+
+            <!-- DECREASE TEXT SIZE -->
+            <button
+                type="button"
+                id="constitutionDecrease"
+                class="constitution-control-button"
+                aria-label="Riduci la dimensione del testo"
+                title="Riduci testo"
+            >
+                −
+            </button>
+
+            <!-- INCREASE TEXT SIZE -->
+            <button
+                type="button"
+                id="constitutionIncrease"
+                class="constitution-control-button"
+                aria-label="Aumenta la dimensione del testo"
+                title="Aumenta testo"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <!-- BACK TO TOP -->
+        <button
+            type="button"
+            id="constitutionBackToTop"
+            class="constitution-control-button constitution-top-button"
+            aria-label="Torna all'inizio del documento"
+            title="Torna in alto"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path
+                    d="M12 19V5M5.5 11.5L12 5l6.5 6.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+
+        </button>
+
+    </div>
+
+
+    <!-- SHARED APPLICATION SCRIPTS -->
+    <script src="../js/app.js"></script>
+    <script src="js/documenti.js"></script>
+
+    <!-- XLSX LIBRARY: LOAD BEFORE THE RENDERER -->
+    <script src="../js/xlsx.full.min.js"></script>
+
+    <!-- SHARED DOCUMENT RENDERER -->
+    <script src="js/constitution.js"></script>
+
+</body>
+</html>
