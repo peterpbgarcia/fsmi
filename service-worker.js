@@ -3,16 +3,13 @@
    SERVICE WORKER
    ========================================================= */
 
-const CACHE_NAME = "fsmi-app-v1.0.3";
-const UPDATE_CACHE_NAME = CACHE_NAME + "-update";
-
+const CACHE_NAME = "fsmi-app-v1.0.2"; // Increment this when updating your app
 
 /* =========================================================
    FILES TO CACHE
    ========================================================= */
 
 const APP_FILES = [
-    "/.htaccess",
     "/aggiornamenti.html",
     "/calendario.html",
     "/css/aggiornamenti.css",
@@ -45,17 +42,16 @@ const APP_FILES = [
     "/index.html",
     "/js/aggiornamenti.js",
     "/js/app.js",
+    "/js/js/religiosi.js", // (Keep your actual path)
     "/js/religiosi.js",
     "/js/xlsx.full.min.js",
     "/manifest.webmanifest",
-    "/NO INDEXING.txt",
-    "/npx http-server.txt",
     "/religiosi.html"
 ];
 
 
 /* =========================================================
-   INSTALL
+   INSTALL (Strict Caching)
    ========================================================= */
 
 self.addEventListener("install", event => {
@@ -63,27 +59,16 @@ self.addEventListener("install", event => {
         (async () => {
             const cache = await caches.open(CACHE_NAME);
 
+            // If any file fails to fetch, installation aborts safely
             for (const file of APP_FILES) {
-                try {
-                    const response = await fetch(file, {
-                        cache: "reload"
-                    });
+                const response = await fetch(file, { cache: "reload" });
 
-                    if (!response.ok) {
-                        throw new Error("HTTP " + response.status);
-                    }
-
-                    await cache.put(file, response);
-
-                    console.log("[FSMI] Cached:", file);
-
-                } catch (error) {
-                    console.error(
-                        "[FSMI] Cache failed:",
-                        file,
-                        error
-                    );
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status + " - " + file);
                 }
+
+                await cache.put(file, response);
+                console.log("[FSMI] Cached:", file);
             }
 
             await self.skipWaiting();
@@ -93,7 +78,7 @@ self.addEventListener("install", event => {
 
 
 /* =========================================================
-   ACTIVATE
+   ACTIVATE (Cleanup Old Caches)
    ========================================================= */
 
 self.addEventListener("activate", event => {
@@ -103,143 +88,18 @@ self.addEventListener("activate", event => {
 
             await Promise.all(
                 keys.map(key => {
-                    if (
-                        (
-                            key.startsWith("fsmi-app-") ||
-                            key.startsWith("fsmi-update-")
-                        ) &&
-                        key !== CACHE_NAME
-                    ) {
+                    if (key.startsWith("fsmi-app-") && key !== CACHE_NAME) {
+                        console.log("[FSMI] Deleting old cache:", key);
                         return caches.delete(key);
                     }
                 })
             );
 
             await self.clients.claim();
-
-            console.log("[FSMI] Service worker activated.");
+            console.log("[FSMI] Service worker activated and old caches cleaned.");
         })()
     );
 });
-
-
-/* =========================================================
-   MANUAL UPDATE MESSAGE
-   ========================================================= */
-
-self.addEventListener("message", event => {
-    if (
-        !event.data ||
-        event.data.type !== "UPDATE_APP"
-    ) {
-        return;
-    }
-
-    event.waitUntil(
-        updateApp()
-            .then(() => {
-                if (event.ports && event.ports[0]) {
-                    event.ports[0].postMessage({
-                        success: true
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("[FSMI] Update failed:", error);
-
-                if (event.ports && event.ports[0]) {
-                    event.ports[0].postMessage({
-                        success: false,
-                        error: error.message
-                    });
-                }
-            })
-    );
-});
-
-
-/* =========================================================
-   UPDATE APP
-   ========================================================= */
-
-async function updateApp() {
-
-    console.log("[FSMI] Starting complete app update...");
-
-    /* 1. Remove previous temporary cache */
-
-    await caches.delete(UPDATE_CACHE_NAME);
-
-    /* 2. Create temporary update cache */
-
-    const updateCache = await caches.open(
-        UPDATE_CACHE_NAME
-    );
-
-    /* 3. Download every listed file */
-
-    for (const file of APP_FILES) {
-        try {
-            console.log("[FSMI] Downloading:", file);
-
-            const response = await fetch(file, {
-                cache: "reload"
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    "HTTP " + response.status + " - " + file
-                );
-            }
-
-            await updateCache.put(
-                file,
-                response.clone()
-            );
-
-            console.log("[FSMI] Updated:", file);
-
-        } catch (error) {
-
-            await caches.delete(UPDATE_CACHE_NAME);
-
-            throw new Error(
-                "Impossibile aggiornare:\n" +
-                file +
-                "\n\n" +
-                error.message
-            );
-        }
-    }
-
-    /* 4. All downloads succeeded; replace main cache */
-
-    const mainCache = await caches.open(CACHE_NAME);
-
-    const oldRequests = await mainCache.keys();
-
-    for (const request of oldRequests) {
-        await mainCache.delete(request);
-    }
-
-    /* 5. Copy updated files into main cache */
-
-    const newRequests = await updateCache.keys();
-
-    for (const request of newRequests) {
-        const response = await updateCache.match(request);
-
-        if (response) {
-            await mainCache.put(request, response);
-        }
-    }
-
-    /* 6. Delete temporary cache */
-
-    await caches.delete(UPDATE_CACHE_NAME);
-
-    console.log("[FSMI] App updated successfully.");
-}
 
 
 /* =========================================================
@@ -247,10 +107,7 @@ async function updateApp() {
    ========================================================= */
 
 self.addEventListener("fetch", event => {
-
     const request = event.request;
-
-    /* Only GET requests */
 
     if (request.method !== "GET") {
         return;
@@ -258,53 +115,34 @@ self.addEventListener("fetch", event => {
 
     const url = new URL(request.url);
 
-    /* Only this website */
-
     if (url.origin !== self.location.origin) {
         return;
     }
 
     event.respondWith(
         (async () => {
-
             const cache = await caches.open(CACHE_NAME);
 
-            /* 1. Exact request, including query parameters */
-
+            // 1. Exact request match
             let cached = await cache.match(request);
-
             if (cached) {
                 return cached;
             }
 
-            /* 2. Match URL without query parameters */
-
+            // 2. Match URL without query parameters
             cached = await cache.match(url.pathname);
-
             if (cached) {
                 return cached;
             }
 
-            /* 3. Try network */
-
+            // 3. Try network fallback
             try {
                 const response = await fetch(request);
 
-                if (
-                    response &&
-                    response.status === 200 &&
-                    response.type !== "opaque"
-                ) {
+                if (response && response.status === 200 && response.type !== "opaque") {
                     event.waitUntil(
-                        cache.put(
-                            url.pathname,
-                            response.clone()
-                        ).catch(error => {
-                            console.warn(
-                                "[FSMI] Cache write failed:",
-                                url.pathname,
-                                error
-                            );
+                        cache.put(url.pathname, response.clone()).catch(error => {
+                            console.warn("[FSMI] Cache write failed:", url.pathname, error);
                         })
                     );
                 }
@@ -312,22 +150,15 @@ self.addEventListener("fetch", event => {
                 return response;
 
             } catch (error) {
-
-                console.warn(
-                    "[FSMI] Offline request failed:",
-                    url.href
-                );
-
-                /* 4. Offline fallback */
+                console.warn("[FSMI] Offline request failed:", url.href);
 
                 const fallback = await cache.match("/index.html");
-
                 if (fallback) {
                     return fallback;
                 }
 
                 return new Response(
-                    "Sei offline e questa pagina non ÃƒÆ’Ã‚Â¨ disponibile.",
+                    "Sei offline e questa pagina non è disponibile.",
                     {
                         status: 503,
                         headers: {
