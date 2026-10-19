@@ -23,12 +23,8 @@ function initConstitution() {
         ? "Costituzioni"
         : "Direttorio";
 
-
-
-    // Exclude PRELIMINARI only from the Costituzioni.
-    const EXCLUDED_PARTS = IS_COSTITUZIONI
-        ? new Set(["preliminari"])
-        : new Set();
+    // No parts are excluded: PRELIMINARI must be included.
+    const EXCLUDED_PARTS = new Set();
 
     const MIN_FONT_SIZE = 13;
     const MAX_FONT_SIZE = 28;
@@ -325,11 +321,11 @@ function initConstitution() {
     // PART ORDER
     // ---------------------------------------------------------
 
-function sortParts(list) {
-    // Preserve the order in which parts appear in Excel.
-    // New parts added to Excel are detected automatically.
-    return list;
-}
+    function sortParts(list) {
+        // Preserve the order in which parts appear in Excel.
+        // New parts added to Excel are detected automatically.
+        return list;
+    }
 
     // ---------------------------------------------------------
     // SEARCH
