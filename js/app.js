@@ -1,4 +1,3 @@
-
 /* ============================================
    CONGREGAZIONE FSMI
    UNIVERSAL PAGE STACK
@@ -107,6 +106,11 @@
         layers.push(layer);
         getHost().appendChild(frame);
 
+        /* Push history state so browser back button / swipe gesture closes the overlay */
+        if (typeof history.pushState === "function") {
+            history.pushState({ appStackLayer: true }, "", window.location.href);
+        }
+
         refreshLayers();
 
         return id;
@@ -195,6 +199,16 @@
         closeTop,
         getDepth,
         getTop
+    });
+
+    /* --------------------------------------------
+       BROWSER BACK BUTTON / SWIPE GESTURE SUPPORT
+       -------------------------------------------- */
+
+    window.addEventListener("popstate", () => {
+        if (layers.length > 0) {
+            closeTop();
+        }
     });
 
     /* --------------------------------------------
