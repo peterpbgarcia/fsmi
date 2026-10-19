@@ -1,4 +1,3 @@
-
 @echo off
 setlocal
 title FSMI Congregation App - Service Worker Updater

@@ -1,15 +1,11 @@
 /* =========================================================
-   FSMI CONGREGATION APP
-   SERVICE WORKER
+   FSMI CONGREGATION APP - SERVICE WORKER
    ========================================================= */
 
-const CACHE_NAME = "fsmi-app-v1.0.2";
-
-/* =========================================================
-   FILES TO CACHE
-   ========================================================= */
+const CACHE_NAME = "fsmi-app-v1.0.4";
 
 const APP_FILES = [
+    ".htaccess",
     "aggiornamenti.html",
     "calendario.html",
     "css/aggiornamenti.css",
@@ -45,6 +41,8 @@ const APP_FILES = [
     "js/religiosi.js",
     "js/xlsx.full.min.js",
     "manifest.webmanifest",
+    "NO INDEXING.txt",
+    "npx http-server.txt",
     "religiosi.html"
 ];
 
@@ -58,7 +56,6 @@ self.addEventListener("install", event => {
         (async () => {
             const cache = await caches.open(CACHE_NAME);
 
-            // If any file fails to fetch, installation aborts safely
             for (const file of APP_FILES) {
                 const response = await fetch(file, { cache: "reload" });
 
@@ -122,7 +119,7 @@ self.addEventListener("fetch", event => {
         (async () => {
             const cache = await caches.open(CACHE_NAME);
 
-            // 1. Exact request match (including query parameters)
+            // 1. Exact match
             let cached = await cache.match(request);
             if (cached) {
                 return cached;
@@ -160,7 +157,7 @@ self.addEventListener("fetch", event => {
                 }
 
                 return new Response(
-                    "Sei offline e questa pagina non è disponibile.",
+                    "Sei offline e questa pagina non ÃƒÂ¨ disponibile.",
                     {
                         status: 503,
                         headers: {
