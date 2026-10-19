@@ -3,7 +3,7 @@
    SERVICE WORKER
    ========================================================= */
 
-const CACHE_NAME = "fsmi-app-v1.0.0";
+const CACHE_NAME = "fsmi-app-v1.0.2";
 const UPDATE_CACHE_NAME = CACHE_NAME + "-update";
 
 
@@ -12,61 +12,46 @@ const UPDATE_CACHE_NAME = CACHE_NAME + "-update";
    ========================================================= */
 
 const APP_FILES = [
-    /* Main pages */
-    "/index.html",
+    "/.htaccess",
     "/aggiornamenti.html",
     "/calendario.html",
-    "/documenti.html",
-    "/religiosi.html",
-
-    /* CSS */
     "/css/aggiornamenti.css",
     "/css/documenti.css",
     "/css/religiosi.css",
     "/css/style.css",
-
-    /* JavaScript */
+    "/dat/costituzioni.xlsx",
+    "/dat/dat-rel.xlsx",
+    "/dat/direttorio.xlsx",
+    "/documenti.html",
+    "/documenti/annuario.html",
+    "/documenti/costituzioni.html",
+    "/documenti/css/subcss.css",
+    "/documenti/direttorio.html",
+    "/documenti/js/constitution.js",
+    "/documenti/js/documenti.js",
+    "/documenti/pdf/annuariofsmi.pdf",
+    "/documenti/pdf/annuariofsmi-ORG.pdf",
+    "/icons/icon-128.webp",
+    "/icons/icon-192.webp",
+    "/icons/icon-256.webp",
+    "/icons/icon-48.webp",
+    "/icons/icon-512.webp",
+    "/icons/icon-72.webp",
+    "/icons/icon-96.webp",
+    "/icons/logo.png",
+    "/img/logo.png",
+    "/img/logo-192.png",
+    "/img/logo-512.png",
+    "/index.html",
     "/js/aggiornamenti.js",
     "/js/app.js",
     "/js/religiosi.js",
     "/js/xlsx.full.min.js",
-
-    /* Manifest */
     "/manifest.webmanifest",
-
-    /* Images */
-    "/img/logo.png",
-    "/img/logo-192.png",
-    "/img/logo-512.png",
-
-    /* Icons */
-    "/icons/icon-48.webp",
-    "/icons/icon-72.webp",
-    "/icons/icon-96.webp",
-    "/icons/icon-128.webp",
-    "/icons/icon-192.webp",
-    "/icons/icon-256.webp",
-    "/icons/icon-512.webp",
-    "/icons/logo.png",
-
-    /* Document pages */
-    "/documenti/annuario.html",
-    "/documenti/costituzioni.html",
-    "/documenti/direttorio.html",
-
-    /* Document CSS and JavaScript */
-    "/documenti/css/subcss.css",
-    "/documenti/js/constitution.js",
-    "/documenti/js/documenti.js",
-
-    /* Excel data */
-    "/dat/costituzioni.xlsx",
-    "/dat/dat-rel.xlsx",
-    "/dat/direttorio.xlsx",
-
-    /* PDFs */
-    "/documenti/pdf/annuariofsmi-ORG.pdf",
-    "/documenti/pdf/annuariofsmi.pdf"
+    "/NO INDEXING.txt",
+    "/npx http-server.txt",
+    "/religiosi.html",
+    "/samt.zip"
 ];
 
 
@@ -343,7 +328,7 @@ self.addEventListener("fetch", event => {
                 }
 
                 return new Response(
-                    "Sei offline e questa pagina non è disponibile.",
+                    "Sei offline e questa pagina non ÃƒÂ¨ disponibile.",
                     {
                         status: 503,
                         headers: {

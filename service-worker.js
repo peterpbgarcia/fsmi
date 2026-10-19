@@ -3,7 +3,7 @@
    SERVICE WORKER
    ========================================================= */
 
-const CACHE_NAME = "fsmi-app-v1.0.1";
+const CACHE_NAME = "fsmi-app-v1.0.3";
 const UPDATE_CACHE_NAME = CACHE_NAME + "-update";
 
 
@@ -327,7 +327,7 @@ self.addEventListener("fetch", event => {
                 }
 
                 return new Response(
-                    "Sei offline e questa pagina non Ã¨ disponibile.",
+                    "Sei offline e questa pagina non ÃƒÆ’Ã‚Â¨ disponibile.",
                     {
                         status: 503,
                         headers: {
