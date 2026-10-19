@@ -2,7 +2,7 @@
    FSMI CONGREGATION APP - SERVICE WORKER
    ========================================================= */
 
-const CACHE_NAME = "fsmi-app-v1.0.4";
+const CACHE_NAME = "fsmi-app-v1.0.7";
 
 const APP_FILES = [
     ".htaccess",
@@ -157,7 +157,7 @@ self.addEventListener("fetch", event => {
                 }
 
                 return new Response(
-                    "Sei offline e questa pagina non ÃƒÂ¨ disponibile.",
+                    "Sei offline e questa pagina non ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨ disponibile.",
                     {
                         status: 503,
                         headers: {
