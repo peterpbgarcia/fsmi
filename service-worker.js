@@ -3,50 +3,49 @@
    SERVICE WORKER
    ========================================================= */
 
-const CACHE_NAME = "fsmi-app-v1.0.2"; // Increment this when updating your app
+const CACHE_NAME = "fsmi-app-v1.0.2";
 
 /* =========================================================
    FILES TO CACHE
    ========================================================= */
 
 const APP_FILES = [
-    "/aggiornamenti.html",
-    "/calendario.html",
-    "/css/aggiornamenti.css",
-    "/css/documenti.css",
-    "/css/religiosi.css",
-    "/css/style.css",
-    "/dat/costituzioni.xlsx",
-    "/dat/dat-rel.xlsx",
-    "/dat/direttorio.xlsx",
-    "/documenti.html",
-    "/documenti/annuario.html",
-    "/documenti/costituzioni.html",
-    "/documenti/css/subcss.css",
-    "/documenti/direttorio.html",
-    "/documenti/js/constitution.js",
-    "/documenti/js/documenti.js",
-    "/documenti/pdf/annuariofsmi.pdf",
-    "/documenti/pdf/annuariofsmi-ORG.pdf",
-    "/icons/icon-128.webp",
-    "/icons/icon-192.webp",
-    "/icons/icon-256.webp",
-    "/icons/icon-48.webp",
-    "/icons/icon-512.webp",
-    "/icons/icon-72.webp",
-    "/icons/icon-96.webp",
-    "/icons/logo.png",
-    "/img/logo.png",
-    "/img/logo-192.png",
-    "/img/logo-512.png",
-    "/index.html",
-    "/js/aggiornamenti.js",
-    "/js/app.js",
-    "/js/js/religiosi.js", // (Keep your actual path)
-    "/js/religiosi.js",
-    "/js/xlsx.full.min.js",
-    "/manifest.webmanifest",
-    "/religiosi.html"
+    "aggiornamenti.html",
+    "calendario.html",
+    "css/aggiornamenti.css",
+    "css/documenti.css",
+    "css/religiosi.css",
+    "css/style.css",
+    "dat/costituzioni.xlsx",
+    "dat/dat-rel.xlsx",
+    "dat/direttorio.xlsx",
+    "documenti.html",
+    "documenti/annuario.html",
+    "documenti/costituzioni.html",
+    "documenti/css/subcss.css",
+    "documenti/direttorio.html",
+    "documenti/js/constitution.js",
+    "documenti/js/documenti.js",
+    "documenti/pdf/annuariofsmi.pdf",
+    "documenti/pdf/annuariofsmi-ORG.pdf",
+    "icons/icon-128.webp",
+    "icons/icon-192.webp",
+    "icons/icon-256.webp",
+    "icons/icon-48.webp",
+    "icons/icon-512.webp",
+    "icons/icon-72.webp",
+    "icons/icon-96.webp",
+    "icons/logo.png",
+    "img/logo.png",
+    "img/logo-192.png",
+    "img/logo-512.png",
+    "index.html",
+    "js/aggiornamenti.js",
+    "js/app.js",
+    "js/religiosi.js",
+    "js/xlsx.full.min.js",
+    "manifest.webmanifest",
+    "religiosi.html"
 ];
 
 
@@ -96,7 +95,7 @@ self.addEventListener("activate", event => {
             );
 
             await self.clients.claim();
-            console.log("[FSMI] Service worker activated and old caches cleaned.");
+            console.log("[FSMI] Service worker activated.");
         })()
     );
 });
@@ -123,26 +122,28 @@ self.addEventListener("fetch", event => {
         (async () => {
             const cache = await caches.open(CACHE_NAME);
 
-            // 1. Exact request match
+            // 1. Exact request match (including query parameters)
             let cached = await cache.match(request);
             if (cached) {
                 return cached;
             }
 
             // 2. Match URL without query parameters
-            cached = await cache.match(url.pathname);
+            const cleanUrl = new URL(request.url);
+            cleanUrl.search = "";
+            cached = await cache.match(cleanUrl);
             if (cached) {
                 return cached;
             }
 
-            // 3. Try network fallback
+            // 3. Try network
             try {
                 const response = await fetch(request);
 
                 if (response && response.status === 200 && response.type !== "opaque") {
                     event.waitUntil(
-                        cache.put(url.pathname, response.clone()).catch(error => {
-                            console.warn("[FSMI] Cache write failed:", url.pathname, error);
+                        cache.put(cleanUrl, response.clone()).catch(error => {
+                            console.warn("[FSMI] Cache write failed:", cleanUrl.href, error);
                         })
                     );
                 }
@@ -152,7 +153,8 @@ self.addEventListener("fetch", event => {
             } catch (error) {
                 console.warn("[FSMI] Offline request failed:", url.href);
 
-                const fallback = await cache.match("/index.html");
+                // 4. Offline fallback
+                const fallback = await cache.match("index.html");
                 if (fallback) {
                     return fallback;
                 }
