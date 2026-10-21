@@ -339,32 +339,32 @@ function getVisibleCelebrations(all, today) {
   const todayItems = all.filter(item => sameDay(item.date, today));
   const upcoming = all.filter(item => item.date > today);
   const past = all.filter(item => item.date < today);
-
+  
   // Create a local calendar-date key without UTC/time-zone shifts.
   function dateKey(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-
+    
     return `${year}-${month}-${day}`;
   }
-
+  
   // Find the three most recent DISTINCT dates before today.
   const pastDates = [
-    ...new Set(past.map(item => dateKey(item.date)))
-  ]
+      ...new Set(past.map(item => dateKey(item.date)))
+    ]
     .sort((a, b) => b.localeCompare(a))
-    .slice(0, 3);
-
+    .slice(0, 3)
+    .reverse(); // <-- THIS FIXES THE ORDER (-3, -2, -1 leading up to Today)
+  
   // Include EVERY celebration belonging to those three dates.
-  // The most recent past date appears first.
   const pastCards = [];
-
+  
   pastDates.forEach(key => {
     const celebrationsOnDate = past
       .filter(item => dateKey(item.date) === key)
       .sort((a, b) => a.name.localeCompare(b.name, "it"));
-
+    
     celebrationsOnDate.forEach(item => {
       pastCards.push({
         kind: "individual",
@@ -372,9 +372,9 @@ function getVisibleCelebrations(all, today) {
       });
     });
   });
-
+  
   const chosen = [];
-
+  
   // Today's group summary comes first when multiple people celebrate.
   if (todayItems.length > 1) {
     chosen.push({
@@ -383,7 +383,7 @@ function getVisibleCelebrations(all, today) {
       items: todayItems
     });
   }
-
+  
   // Then show every individual celebration for today.
   chosen.push(
     ...todayItems.map(item => ({
@@ -391,23 +391,20 @@ function getVisibleCelebrations(all, today) {
       ...item
     }))
   );
-
+  
   // Preserve the existing upcoming-celebration behavior.
   const futureCount = Math.min(
     upcoming.length,
     Math.max(3, 7 - chosen.length)
   );
-
+  
   chosen.push(
     ...upcoming.slice(0, futureCount).map(item => ({
       kind: "individual",
       ...item
     }))
   );
-
-  // Past cards come first in the slider's order.
-  // render() will still scroll automatically to today's
-  // group/card, or the nearest upcoming celebration.
+  
   return [...pastCards, ...chosen];
 }
 
