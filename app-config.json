@@ -1,0 +1,10 @@
+{
+  "appName": "Compendio",
+  "packageName": "com.compendiofsmi.app",
+  "statusBarColor": "#1683c6",
+  "iconPath": "icons/logo.png",
+  "splashScreen": true,
+  "splashImagePath": "icons/logo.png",
+  "splashBackgroundColor": "#ffffff",
+  "microphonePermission": true
+}
