@@ -331,7 +331,7 @@ function formatFullDate(date) {
     day: "numeric",
     month: "long"
   }).format(date);
-}
+} 
 
 
 
