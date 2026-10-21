@@ -1,10 +1,10 @@
 {
-  "appName": "Compendio",
-  "packageName": "com.compendiofsmi.app",
-  "statusBarColor": "#1683c6",
+  "appName": "App FSMI",
+  "packageName": "com.fsmiapp.app",
+  "statusBarColor": "#FFFFFF",
   "iconPath": "icons/logo.png",
   "splashScreen": true,
   "splashImagePath": "icons/logo.png",
   "splashBackgroundColor": "#ffffff",
-  "microphonePermission": true
+  "microphonePermission": false
 }
