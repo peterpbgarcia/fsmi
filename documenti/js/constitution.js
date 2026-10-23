@@ -40,7 +40,8 @@ function initConstitution() {
         increase: document.getElementById("constitutionIncrease"),
         backToTop: document.getElementById("constitutionBackToTop"),
         status: document.getElementById("constitutionSearchStatus"),
-        message: document.getElementById("constitutionMessage")
+        message: document.getElementById("constitutionMessage"),
+        indexSection: document.querySelector(".constitution-index-section")
     };
 
     if (!el.index || !el.content) {
@@ -57,7 +58,6 @@ function initConstitution() {
 
     let parts = [];
     let fontSize = 17;
-    let searchTimer;
 
     bindControls();
     setFontSize(fontSize);
@@ -322,8 +322,6 @@ function initConstitution() {
     // ---------------------------------------------------------
 
     function sortParts(list) {
-        // Preserve the order in which parts appear in Excel.
-        // New parts added to Excel are detected automatically.
         return list;
     }
 
@@ -331,10 +329,19 @@ function initConstitution() {
     // SEARCH
     // ---------------------------------------------------------
 
+    function textMatchesQuery(text, query) {
+        if (!query) return true;
+        const normText = normalize(text);
+        const normQuery = normalize(query);
+        if (!normQuery) return true;
+
+        return normText.includes(normQuery);
+    }
+
     function rowMatches(row, query) {
         if (!query) return true;
 
-        return normalize([
+        const combined = [
             row.part,
             row.chapter,
             row.subtitle,
@@ -342,7 +349,9 @@ function initConstitution() {
             row.type,
             row.text,
             row.subtext
-        ].join(" ")).includes(query);
+        ].join(" ");
+
+        return textMatchesQuery(combined, query);
     }
 
     function itemMatches(item, query) {
@@ -353,12 +362,12 @@ function initConstitution() {
         }
 
         if (item.kind === "subtitle") {
-            return normalize(item.name).includes(query) ||
+            return textMatchesQuery(item.name, query) ||
                 item.rows.some(row => rowMatches(row, query));
         }
 
         if (item.kind === "chapter") {
-            return normalize(item.chapter.name).includes(query) ||
+            return textMatchesQuery(item.chapter.name, query) ||
                 item.chapter.items.some(
                     child => itemMatches(child, query)
                 );
@@ -382,7 +391,7 @@ function initConstitution() {
             }
 
             if (item.kind === "subtitle") {
-                const titleMatches = normalize(item.name).includes(query);
+                const titleMatches = textMatchesQuery(item.name, query);
 
                 const matchingRows = item.rows.filter(
                     row => rowMatches(row, query)
@@ -406,9 +415,10 @@ function initConstitution() {
             if (item.kind === "chapter") {
                 const chapter = item.chapter;
 
-                const titleMatches = normalize(
-                    chapter.name
-                ).includes(query);
+                const titleMatches = textMatchesQuery(
+                    chapter.name,
+                    query
+                );
 
                 const matchingItems = filterItems(
                     chapter.items,
@@ -450,10 +460,15 @@ function initConstitution() {
         if (el.clear) {
             el.clear.hidden = !query;
         }
+
+        // Show/hide index section based on whether there is an active search query
+        if (el.indexSection) {
+            el.indexSection.style.display = query ? "none" : "";
+        }
     }
 
     function partMatches(part, query) {
-        return normalize(part.name).includes(query) ||
+        return textMatchesQuery(part.name, query) ||
             part.items.some(item => itemMatches(item, query));
     }
 
@@ -752,7 +767,12 @@ function initConstitution() {
             const subtext = document.createElement("div");
 
             subtext.className = "canon-subtext";
-            subtext.textContent = row.subtext;
+
+            appendHighlightedText(
+                subtext,
+                row.subtext,
+                query
+            );
 
             body.appendChild(subtext);
         }
@@ -800,13 +820,19 @@ function initConstitution() {
     }
 
     // ---------------------------------------------------------
-    // SAFE SEARCH HIGHLIGHTING
+    // SAFE SEARCH HIGHLIGHTING (Supports Partial Matches)
     // ---------------------------------------------------------
 
     function appendHighlightedText(element, value, query) {
         const text = String(value ?? "");
 
         if (!query) {
+            element.textContent = text;
+            return;
+        }
+
+        const normQuery = normalize(query);
+        if (!normQuery) {
             element.textContent = text;
             return;
         }
@@ -842,12 +868,12 @@ function initConstitution() {
         let match;
 
         while (
-            (match = normalizedText.indexOf(query, searchFrom)) !== -1
+            (match = normalizedText.indexOf(normQuery, searchFrom)) !== -1
         ) {
             const first = positions[match];
 
             const last = positions[
-                match + query.length - 1
+                match + normQuery.length - 1
             ];
 
             if (!first || !last) break;
@@ -870,7 +896,7 @@ function initConstitution() {
             fragment.appendChild(mark);
 
             originalEnd = last.end;
-            searchFrom = match + query.length;
+            searchFrom = match + normQuery.length;
         }
 
         if (originalEnd === 0) {
@@ -901,27 +927,51 @@ function initConstitution() {
         ].includes(normalize(row.type));
     }
 
-    function getSuggestionRows() {
+    function getSuggestionRows(query) {
         const results = [];
 
         function collect(items) {
             items.forEach(item => {
                 if (item.kind === "row") {
-                    results.push(item.row);
+                    const rowSearchable = [
+                        item.row.number,
+                        item.row.type,
+                        item.row.text,
+                        item.row.subtext
+                    ].join(" ");
+
+                    if (!query || textMatchesQuery(rowSearchable, query)) {
+                        results.push(item.row);
+                    }
 
                 } else if (item.kind === "subtitle") {
-                    results.push({
-                        sourceIndex: item.rows[0]?.sourceIndex,
-                        part: item.rows[0]?.part || "",
-                        chapter: item.rows[0]?.chapter || "",
-                        subtitle: item.name,
-                        type: "heading",
-                        number: "",
-                        text: item.name,
-                        subtext: ""
-                    });
+                    const subtitleName = item.name;
 
-                    results.push(...item.rows);
+                    if (!query || textMatchesQuery(subtitleName, query)) {
+                        results.push({
+                            sourceIndex: item.rows[0]?.sourceIndex,
+                            part: item.rows[0]?.part || "",
+                            chapter: item.rows[0]?.chapter || "",
+                            subtitle: subtitleName,
+                            type: "heading",
+                            number: "",
+                            text: subtitleName,
+                            subtext: ""
+                        });
+                    }
+
+                    item.rows.forEach(row => {
+                        const rowSearchable = [
+                            row.number,
+                            row.type,
+                            row.text,
+                            row.subtext
+                        ].join(" ");
+
+                        if (!query || textMatchesQuery(rowSearchable, query)) {
+                            results.push(row);
+                        }
+                    });
 
                 } else if (item.kind === "chapter") {
                     collect(item.chapter.items);
@@ -955,40 +1005,26 @@ function initConstitution() {
 
         if (!query) return;
 
-        const rows = getSuggestionRows();
-
         // Numeric searches prioritize exact canon-number matches.
         const numberQuery = query
             .replace(/^(canone|canon|n)\s*/, "")
             .replace(/\.$/, "")
             .trim();
 
+        const rows = getSuggestionRows(query);
+
         const exactCanons = rows.filter(row =>
             isCanonRow(row) &&
             normalize(row.number).replace(/\.$/, "") === numberQuery
         );
 
-        const matchingRows = rows.filter(row => {
-            const searchable = normalize([
-                row.part,
-                row.chapter,
-                row.subtitle,
-                row.number,
-                row.type,
-                row.text,
-                row.subtext
-            ].join(" "));
-
-            return searchable.includes(query);
-        });
-
         const seen = new Set();
         const candidates = [];
 
-        [...exactCanons, ...matchingRows].forEach(row => {
+        [...exactCanons, ...rows].forEach(row => {
             if (row.sourceIndex === undefined) return;
 
-            const key = String(row.sourceIndex);
+            const key = String(row.sourceIndex) + "_" + (row.type === "heading" ? "heading" : "row");
 
             if (seen.has(key)) return;
 
@@ -1049,6 +1085,7 @@ function initConstitution() {
 
         el.search.value = "";
 
+        // Reset the page view when clicking a suggestion
         renderAll();
 
         if (el.suggestions) {
@@ -1157,14 +1194,21 @@ function initConstitution() {
     // ---------------------------------------------------------
 
     function bindControls() {
+        // Show suggestions as user types, but DO NOT filter the main page automatically
         el.search?.addEventListener("input", () => {
-            clearTimeout(searchTimer);
-
             renderSuggestions();
-
-            searchTimer = setTimeout(renderAll, 120);
         });
 
+        // Filter the main page and hide the index ONLY when pressing Enter
+        el.search?.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                closeSuggestions();
+                renderAll();
+            }
+        });
+
+        // Reset everything when clicking clear (×)
         el.clear?.addEventListener("click", () => {
             if (el.search) {
                 el.search.value = "";
